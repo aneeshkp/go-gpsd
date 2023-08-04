@@ -259,8 +259,10 @@ func (s *Session) deliverReport(class string, report interface{}) {
 
 // Close closes the connection to GPSD
 func (s *Session) Close() {
-	if err := s.socket.Close(); err != nil {
-		return
+	if s.socket != nil {
+		if err := s.socket.Close(); err != nil {
+			return
+		}
 	}
 	s.socket = nil
 }
@@ -294,9 +296,9 @@ func watch(done chan bool, s *Session) {
 	}
 	select {
 	case done <- true:
-		fmt.Println("Done")
+		fmt.Println("Done gpsd monitoring")
 	case <-time.After(100 * time.Millisecond):
-		fmt.Println("Timed out")
+		fmt.Println("Timed out waiting on gpsd monitor, exiting anyway")
 	}
 }
 
