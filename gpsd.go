@@ -292,7 +292,12 @@ func watch(done chan bool, s *Session) {
 			}
 		}
 	}
-	done <- true
+	select {
+	case done <- true:
+		fmt.Println("Done")
+	case <-time.After(100 * time.Millisecond):
+		fmt.Println("Timed out")
+	}
 }
 
 func unmarshalReport(class string, bytes []byte) (interface{}, error) {
